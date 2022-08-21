@@ -3,6 +3,9 @@ import randomWords from "random-words"
 const NUMBER_OF_WORDS = 200
 const SECONDS = 60
 
+
+
+  
 function App() {
   const [words, setWords] = useState([])
   const [countDown, setCountDown] = useState(SECONDS)

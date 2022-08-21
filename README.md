@@ -1,1 +1,1 @@
-# React-Therapeutic-Typing
+# React-Calulated-Typing
