@@ -37,6 +37,9 @@ function App() {
           setCurrWordIndex(0)
           setCorrect(0)
           setIncorrect(0)
+          setCurrCharIndex(-1)
+          setCurrChar("")
+
         }
         if(status !== "started") {
         setStatus('started')
@@ -57,7 +60,7 @@ function App() {
 
     }
 
-    function handleKeyDown({keyCode}) {
+    function handleKeyDown({keyCode, key}) {
       
       // spacebar function
       
@@ -66,6 +69,10 @@ function App() {
       SetCurrInput('')
       setCurrWordIndex(currWordIndex + 1)
       setCurrCharIndex(-1)
+      // backspace function
+     } else if(keyCode === 8) {
+      setCurrCharIndex(currCharIndex-1)
+      setCurrChar("")
      } else {
       setCurrCharIndex(currCharIndex +1)
       setCurrChar(key)
@@ -84,13 +91,19 @@ function App() {
 
     function getCharClass(wordIdx, charIdx, char) {
       if(wordIdx === currWordIndex && charIdx === currCharIndex && currChar && status !== 'finished')
-      if(char === currChar){
+        if(char === currChar){
         return 'has-background-success'
-      } else {
-        return 'has-background-danger'
-      }
-    } else {
-      return ''
+        } else {
+          return 'has-background-danger'
+        } else if(wordIdx === currWordIndex && currCharIndex >= words[currWordIndex].length) {
+          return 'has-background-danger'
+        }
+       
+       
+        else {
+        return ''
+      } 
+
     }
 
   return (
@@ -113,16 +126,15 @@ function App() {
                   <div className="content">
                     {words.map((word, i) => (
                       <span key={i}>
-                        <>
-                        <span>
-                          {word.split('').map((char, idx) => (
-                            <span className={getCharClass(i, idx)} key={idx}>{char}</span>
-                           )) } 
-                        </span>
-                        </>
-                      <span></span>
-                    </span>
+                      <span>
+                        {word.split('').map((char, idx) => (
+                          <span className={getCharClass(i, idx, char)} key={idx}>{char}</span>
+                        ))}
+                      </span>
+                      <span> </span>
+                      </span>
                     ))}
+
                   </div>
                 </div>
               </div>
