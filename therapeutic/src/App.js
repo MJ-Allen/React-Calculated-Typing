@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import randomWords from "random-words"
 const NUMBER_OF_WORDS = 200
 const SECONDS = 60
@@ -8,31 +8,52 @@ function App() {
   const [countDown, setCountDown] = useState(SECONDS)
   const [currInput, SetCurrInput] = useState('')
   const [currWordIndex, setCurrWordIndex] = useState(0)
+  const [currCharIndex, setCurrCharIndex] = useState(-1)
+  const [currChar, setCurrChar] = useState('')
   const [correct, setCorrect] = useState(0)
   const [incorrect, setIncorrect] = useState(0)
-  const [status, setStatus] = useState('thinking')
+  const [status, setStatus] = useState('waiting')
+  const textInput = useRef(null)
   useEffect(() => {
       setWords(generateWords())
     }, [])
 
+    useEffect(() => {
+      if(status === "started")
+      textInput.current.focus()
+    }, [status])
+// this will apply focus on the input field
     function generateWords() {
       return new Array(NUMBER_OF_WORDS).fill(null).map(() => randomWords())
     }
 
-    function start() {
-      if(state !== "started") {
-        setStatus('started')
-      }
-
-      let interval = setInterval(() => {
-        setCountDown((prevCountDown) => {
-        if(prevCountDown === 0) {
-          clearInterval(interval)
-        } else {
-        return prevCountDown - 1
+    // function start() {
+    // 
+    //     
+    //   }
+      function start() {
+        if(status === 'finished') {
+          setWords(generateWords())
+          setCurrWordIndex(0)
+          setCorrect(0)
+          setIncorrect(0)
         }
-      } ) 
-      }, 1000)
+        if(status !== "started") {
+        setStatus('started')
+        let interval = setInterval(() => {
+          setCountDown((prevCountDown) => {
+          if(prevCountDown === 0) {
+            clearInterval(interval)
+            setStatus('finished')
+            SetCurrInput("")
+            return SECONDS
+            // need to return seconds from setCountDown
+          } else {
+          return prevCountDown - 1
+          }
+        } ) 
+        }, 1000)
+      }
 
     }
 
@@ -44,6 +65,10 @@ function App() {
       checkMatch()
       SetCurrInput('')
       setCurrWordIndex(currWordIndex + 1)
+      setCurrCharIndex(-1)
+     } else {
+      setCurrCharIndex(currCharIndex +1)
+      setCurrChar(key)
      }
     }
 
@@ -57,6 +82,16 @@ function App() {
       }
     }
 
+    function getCharClass(wordIdx, charIdx, char) {
+      if(wordIdx === currWordIndex && charIdx === currCharIndex && currChar && status !== 'finished')
+      if(char === currChar){
+        return 'has-background-success'
+      } else {
+        return 'has-background-danger'
+      }
+    } else {
+      return ''
+    }
 
   return (
     <div className="App">
@@ -66,7 +101,7 @@ function App() {
         </div>
       </div>
       <div className="control is-expanded section">
-        <input disabled={status !== "started"}type="text" className="input" onKeyDown={handleKeyDown} value={currInput} onChange={(e) => SetCurrInput(e.target.value)} />
+        <input ref= {textInput} disabled={status !== "started"} type="text" className="input" onKeyDown={handleKeyDown} value={currInput} onChange={(e) => SetCurrInput(e.target.value)} />
       </div>
       <div className="section">
         <button className="button is-info is-fullwidth" onClick={start}> START</button>
@@ -78,11 +113,13 @@ function App() {
                   <div className="content">
                     {words.map((word, i) => (
                       <span key={i}>
+                        <>
                         <span>
                           {word.split('').map((char, idx) => (
-                            <span key={idx}>{char}</span>
-                           )) }
+                            <span className={getCharClass(i, idx)} key={idx}>{char}</span>
+                           )) } 
                         </span>
+                        </>
                       <span></span>
                     </span>
                     ))}
