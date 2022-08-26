@@ -2,10 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import randomWords from "random-words"
 const NUMBER_OF_WORDS = 200
 const SECONDS = 60
-
-
-
-  
+ 
 function App() {
   const [words, setWords] = useState([])
   const [countDown, setCountDown] = useState(SECONDS)
@@ -110,20 +107,21 @@ function App() {
     }
 
   return (
-    <div className="App">
-      <div className="section">
+    <div className="content is-centered App has-background-info">
+      <h1>Calcualted Typing</h1>
+      <div className="section is large">
         <div className="is-size-1 has-text-centered has-text-primary">
           <h2>{countDown}</h2>
         </div>
       </div>
       <div className="control is-expanded section">
-        <input ref= {textInput} disabled={status !== "started"} type="text" className="input" onKeyDown={handleKeyDown} value={currInput} onChange={(e) => SetCurrInput(e.target.value)} />
+        <input class="is-primary" ref= {textInput} disabled={status !== "started"} type="text" className="input" onKeyDown={handleKeyDown} value={currInput} onChange={(e) => SetCurrInput(e.target.value)} />
       </div>
       <div className="section">
-        <button className="button is-info is-fullwidth" onClick={start}> START</button>
+        <button className="button is-success is-rounded is-fullwidth" onClick={start}> START</button>
       </div>
           {status === "started" && (
-            <div className="section">
+            <div className="section has-background-success">
               <div className="card">
                 <div className="card-content">
                   <div className="content">
